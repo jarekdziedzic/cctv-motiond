@@ -1,0 +1,3 @@
+#!/bin/bash
+
+nohup /usr/local/bin/cctv-motion-detection.sh > /var/log/cctv-motiond.log &
