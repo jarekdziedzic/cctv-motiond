@@ -8,9 +8,9 @@ fi
 function diff_and_update_progress()
 {
     /usr/local/bin/highlight-if-different.sh $1 $2 | tee -a ".log"
-    if [ ${PIPESTATUS[0]} ];
+    if [ ${PIPESTATUS} -eq 0 ];
     then
-        touch -r $1 ".done"
+        touch -r $2 ".done"
     fi
 }
 

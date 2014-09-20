@@ -1,1 +1,2 @@
-../../highlight-if-different.sh 1.jpeg 2.jpeg
+#! /bin/bash
+../highlight-if-different.sh images/1.jpeg images/2.jpeg
