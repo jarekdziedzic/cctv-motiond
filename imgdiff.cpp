@@ -50,7 +50,7 @@ int main(int argc, char** argv)
     cvtColor(img1, img1proc, CV_RGB2GRAY);
     cvtColor(img2, img2proc, CV_RGB2GRAY);
     absdiff(img1proc,img2proc,imgdiff);
-    threshold(imgdiff, imgdiff2, 60, 255, CV_THRESH_BINARY);
+    threshold(imgdiff, imgdiff2, 40, 255, CV_THRESH_BINARY);
 
     cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT,cv::Size(8,8));
     erode(imgdiff2, imgdiff3, element);
