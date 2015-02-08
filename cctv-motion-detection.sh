@@ -2,7 +2,7 @@
 
 while true
 do
-    for i in 1 2; do 
+    for i in 1 2 3; do 
         dir="/store/cctv/cam$i"
         cd $dir || (echo "Could not cd into $dir. Aborting."; exit 1)
         today=`date +"%Y-%m-%d"`
