@@ -65,9 +65,6 @@ int main(int argc, char** argv)
     cvtColor(img1, img1proc, CV_RGB2GRAY);
     cvtColor(img2, img2proc, CV_RGB2GRAY);
     Mat img1proc2 = equalizeBrightness(img1proc, img2proc);
-    imwrite(string(cropdir) + "/" + mybasename(imgpath1) + "-bw-equalized.jpeg", img1proc2);
-    imwrite(string(cropdir) + "/" + mybasename(imgpath1) + "-bw.jpeg", img1proc);
-    imwrite(string(cropdir) + "/" + mybasename(imgpath2) + "-bw.jpeg", img2proc);
 
     img1proc = img1proc2;
     absdiff(img1proc,img2proc,imgdiff);
