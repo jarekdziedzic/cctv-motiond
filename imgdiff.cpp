@@ -38,7 +38,9 @@ Mat equalizeBrightness(Mat& img1, Mat& img2)
     Scalar b2 = getAverageBrightness(img2);
     Mat img1proc = Mat(img1.cols, img1.rows, CV_8UC1);
 
-    img1.convertTo(img1proc, CV_8UC1, 1, (double)(b2 - b1)[0]);
+    double brghtDiff = (double)(b2 - b1)[0];
+    cout<<"brightness difference: "<<brghtDiff<<endl;
+    img1.convertTo(img1proc, CV_8UC1, 1, brghtDiff);
     return img1proc;
 }
 
