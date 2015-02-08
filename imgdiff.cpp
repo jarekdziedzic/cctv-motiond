@@ -27,6 +27,21 @@ std::string mybasename(const std::string& path)
     return s;
 }
 
+Scalar getAverageBrightness(const Mat& in)
+{
+    return mean(in);
+}
+
+Mat equalizeBrightness(Mat& img1, Mat& img2)
+{
+    Scalar b1 = getAverageBrightness(img1);
+    Scalar b2 = getAverageBrightness(img2);
+    Mat img1proc = Mat(img1.cols, img1.rows, CV_8UC1);
+
+    img1.convertTo(img1proc, CV_8UC1, 1, (double)(b2 - b1)[0]);
+    return img1proc;
+}
+
 int main(int argc, char** argv)
 {
     if(argc != 4)
@@ -49,6 +64,12 @@ int main(int argc, char** argv)
     Mat imgdiff3 = Mat(img2.cols, img2.rows, CV_8UC1);
     cvtColor(img1, img1proc, CV_RGB2GRAY);
     cvtColor(img2, img2proc, CV_RGB2GRAY);
+    Mat img1proc2 = equalizeBrightness(img1proc, img2proc);
+    imwrite(string(cropdir) + "/" + mybasename(imgpath1) + "-bw-equalized.jpeg", img1proc2);
+    imwrite(string(cropdir) + "/" + mybasename(imgpath1) + "-bw.jpeg", img1proc);
+    imwrite(string(cropdir) + "/" + mybasename(imgpath2) + "-bw.jpeg", img2proc);
+
+    img1proc = img1proc2;
     absdiff(img1proc,img2proc,imgdiff);
     threshold(imgdiff, imgdiff2, 40, 255, CV_THRESH_BINARY);
 
