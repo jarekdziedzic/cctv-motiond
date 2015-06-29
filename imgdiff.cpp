@@ -10,10 +10,6 @@ using namespace std;
 using namespace cv;
 //using namespace boost;
 
-enum ReturnType {
-    IMAGES_SIMILAR = 0,
-    IMAGES_DIFFERENT = 66,
-};
 
 std::string mybasename(const std::string& path)
 {
@@ -23,7 +19,7 @@ std::string mybasename(const std::string& path)
     {
         s = string(s, 0, searchresult);
     }
-    cout<<s<<endl;
+    //cout<<s<<endl;
     return s;
 }
 
@@ -39,7 +35,7 @@ Mat equalizeBrightness(Mat& img1, Mat& img2)
     Mat img1proc = Mat(img1.cols, img1.rows, CV_8UC1);
 
     double brghtDiff = (double)(b2 - b1)[0];
-    cout<<"brightness difference: "<<brghtDiff<<endl;
+    cerr<<"brightness difference: "<<brghtDiff<<endl;
     img1.convertTo(img1proc, CV_8UC1, 1, brghtDiff);
     return img1proc;
 }
@@ -48,7 +44,7 @@ int main(int argc, char** argv)
 {
     if(argc != 4)
     {
-        cout<<"Invalid parameters count."<<endl;
+        cerr<<"Invalid parameters count."<<endl;
         exit(1);
     }
 
@@ -81,7 +77,8 @@ int main(int argc, char** argv)
     //cout<<countNonZero(imgdiff)<<endl;
 
     int64_t count = countNonZero(imgdiff3);
-    cout<<"Different pixels count: "<<count<<endl;
+    //write output: number of pixels different
+
     if(count > 500)
     {
         //different!
@@ -99,15 +96,17 @@ int main(int argc, char** argv)
 
         if((bounds.width >= 0.95* img1.cols) && (bounds.height >= 0.95* img1.rows))
         {
-            cout<<"This looks like an exposure or focus error. Ignoring."<<endl;
+            cerr<<"This looks like an exposure or focus error. Ignoring."<<endl;
             //actually not that different. possibly an exposure error.
-            return IMAGES_SIMILAR;
+            cout<<"0";
+            return 0;
         }
 
         if((bounds.width > 0.2 * img1.cols) && (bounds.height > 0.2 * img1.rows) && count < 3000 )
         {
-            cout<<"This looks like wind motion. Ignoring."<<endl;
-            return IMAGES_SIMILAR;
+            cerr<<"This looks like wind motion. Ignoring."<<endl;
+            cout<<"0";
+            return 0;
         }
 
         //cout<<". TL = "<<bounds.tl()<<", BR = "<<bounds.br()<<endl;
@@ -140,9 +139,12 @@ int main(int argc, char** argv)
 
         imwrite(string(cropdir) + "/" + mybasename(imgpath1) + "-1s.jpeg", crop1s);
         imwrite(string(cropdir) + "/" + mybasename(imgpath2) + "-2s.jpeg", crop2s);
-        
-        return IMAGES_DIFFERENT;
+        cout<<count<<endl;
+    }
+    else
+    {
+        cout<<"0";
     }
 
-    return IMAGES_SIMILAR;
+    return 0;
 }
