@@ -27,17 +27,17 @@ echo "Using scratchdir $scratchdir"
 output=$($imgdiff images/1.jpeg images/2.jpeg $scratchdir)
 exitcode=$?
 
-#imgdiff returns 0 when images are similar and 66 when they are different
+#imgdiff prints 0 when images are similar and non zero value of different pixel count when they are different
 #any other status is an error
 
 #try comparing different images first
 echo "imgdiff: $output"
-if [[ $exitcode -ne "0" && $exitcode -ne "66" ]]; then
+if [[ $exitcode -ne "0" ]]; then
     echo "imgdiff returned an error. Aborting."
     exit $exitcode
 fi
 
-if [[ $exitcode -ne "66" ]]; then
+if [[ $output -eq "0" ]]; then
     echo "images should have been flaged as different"
 fi
 
