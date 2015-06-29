@@ -1,6 +1,8 @@
 #! /bin/env python
 
 import os
+import sys
+from subprocess import check_output,CalledProcessError
 
 """Returns a list of files in the directory that are images"""
 def get_images(dir, exts=['.jpeg']):
@@ -17,6 +19,12 @@ def get_images(dir, exts=['.jpeg']):
 
 
 def imgdiff(p):
+    try:
+        return int(check_output(['./imgdiff', p[0], p[1], '.']))
+    except CalledProcessError as e:
+        #FIXME
+        print "boom! %r: %r" % (e.cmd, e.output)
+        return 0
     return 0
 
 
@@ -25,7 +33,7 @@ def imgdiff(p):
 def find_motion(*dirs):
     scores = []
     for dir in dirs:
-        imgs = get_images(dir, ['.jpg'])
+        imgs = get_images(dir, ['.jpeg'])
         if len(imgs) > 0:
             pairs = zip(imgs, imgs[1:])
             #print "pairs = %r" % pairs
@@ -33,4 +41,4 @@ def find_motion(*dirs):
         return scores
 
 if __name__ == '__main__':
-    print  "Scores = %r" % find_motion('/tmp')
+    print  "Scores = %r" % find_motion(sys.argv[1])
