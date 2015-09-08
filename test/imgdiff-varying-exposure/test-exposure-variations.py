@@ -7,8 +7,9 @@ from subprocess import call
 def main():
     images = [ ["images/brighter.jpeg", "images/darker.jpeg"],
                ["images/brighter2.jpeg", "images/darker2.jpeg"],
-               #["images/brighter3.jpeg", "images/darker3.jpeg"],
-               ["images/darker3.jpeg", "images/brighter3.jpeg"]]
+               ["images/brighter3.jpeg", "images/darker3.jpeg"],
+               ["images/darker3.jpeg", "images/brighter3.jpeg"],
+               ["images/brighter4.jpeg", "images/darker4.jpeg"]]
 
     for img in images:
         print "Comparing ", img

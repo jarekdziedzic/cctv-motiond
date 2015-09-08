@@ -3,7 +3,7 @@ dest=/usr/local/bin
 all: compile check
 
 compile:
-		g++ imgdiff.cpp -lopencv_core -lopencv_highgui -lopencv_imgproc -Os -o imgdiff
+		g++ -std=c++14 imgdiff.cpp -lopencv_core -lopencv_highgui -lopencv_imgproc -Os -o imgdiff
 
 clean:
 		rm imgdiff
@@ -35,3 +35,4 @@ uninstall:
 
 check:
 	cd test; ./imgdiff-test.sh ../imgdiff
+	cd test/imgdiff-varying-exposure; ./test-exposure-variations.py

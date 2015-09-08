@@ -14,13 +14,13 @@ def get_images(dir, exts=['.jpeg']):
                     images.append('%s/%s' % (root, f))
                     break
     #FIXME: This assumes that alphabetical sort is equivalent to
-    #       chronological sort of images.
+    #FIXME: chronological sort of images.
     return sorted(images)
 
 
 def imgdiff(p):
     try:
-        return int(check_output(['./imgdiff', p[0], p[1], '.']))
+        return int(check_output(['./imgdiff', p[0], p[1], '/tmp']))
     except CalledProcessError as e:
         #FIXME
         print "boom! %r: %r" % (e.cmd, e.output)
