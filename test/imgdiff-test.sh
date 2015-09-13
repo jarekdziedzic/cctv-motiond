@@ -39,6 +39,7 @@ fi
 
 if [[ $output -eq "0" ]]; then
     echo "images should have been flaged as different"
+    exit 1
 fi
 
 #ensure that cropped images which show the moving object
@@ -47,5 +48,6 @@ for i in 1-1.jpeg 1-1s.jpeg 2-2.jpeg 2-2s.jpeg; do
     croppath="$scratchdir/$i"
     if [[ ! -f $croppath ]]; then
         echo "imgdiff should have created $croppath"
+        exit 1
     fi
 done

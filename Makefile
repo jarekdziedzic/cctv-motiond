@@ -35,4 +35,5 @@ uninstall:
 
 check:
 	cd test; ./imgdiff-test.sh ../imgdiff
+	cd test; ./imgdiff-test.py
 	cd test/imgdiff-varying-exposure; ./test-exposure-variations.py

@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <string>
+#include <cmath>
 
 using namespace std;
 using namespace cv;
@@ -31,6 +32,20 @@ Scalar average(const Mat& in)
 Mat adjust(const Mat& img, const double factor)
 {
     Mat imgproc = Mat(img.cols, img.rows, CV_8UC1);
+    cerr<<"adjust factor = "<<factor<<endl;
+    auto multiplier = pow(2, factor);
+    for_each(img.data, img.dataend, [multiplier](auto& elem)
+    {
+        double result = elem * multiplier;
+        if(result > 255)
+        {
+            elem = 255;
+        }
+        else
+        {
+            elem = result;
+        }
+    });
     img.convertTo(imgproc, CV_8UC1, 1, factor);
     return imgproc;
 }
@@ -40,6 +55,8 @@ std::pair<Mat, Mat> equalize(Mat&& img1, Mat&& img2)
     double b1 = brightness::average(img1)[0];
     double b2 = brightness::average(img2)[0];
     double brghtDiff = b2 - b1;
+    cerr<<"b1 = "<<b1<<", b2 = "<<b2<<endl;
+
     cerr<<"brightness difference: "<<brghtDiff<<endl;
 
     //images differ in brightness
@@ -51,15 +68,22 @@ std::pair<Mat, Mat> equalize(Mat&& img1, Mat&& img2)
         //assume they are clipped just from one side. Then, the one with
         //average brightness further from mid gray is the one we want to
         //replicate in the other.
-        if(abs(127 - b1) > abs(127 - b2))
+        const int midGray = 127;
+        //if(abs(midGray - b1) > abs(midGray - b2))
+        //b1 = 66, b2 = 12 => 61 ?> 115
+        //if(abs(b1 - midGray) > abs(b2 - midGray))
+        // 61 >? 100
+
+        if(abs(b1 - midGray) < abs(b2 - midGray))
         {
             //img1 more clipped
-            return {move(img1), brightness::adjust(img2, -brghtDiff)};
+
+            return {move(img1), brightness::adjust(img2, log2(b1/b2))};
         }
         else
         {
             //img2 more clipped
-            return {brightness::adjust(img1, brghtDiff), move(img2)};
+            return {brightness::adjust(img1, log2(b2/b1)), move(img2)};
         }
     }
     else
@@ -88,13 +112,16 @@ Mat compareImages(Mat& img1, Mat& img2)
 
     auto images = brightness::equalize(move(img1proc), move(img2proc));
 
-    //WTF? img1proc = img1proc2;
-
-    absdiff(img1proc,img2proc,imgdiff);
+    absdiff(images.first,images.second, imgdiff);
     threshold(imgdiff, imgdiff2, 40, 255, CV_THRESH_BINARY);
 
     cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT,cv::Size(8,8));
     erode(imgdiff2, imgdiff3, element);
+//    imwrite("/tmp/a1.jpeg", images.first);
+//
+//    imwrite("/tmp/a2.jpeg", images.second);
+//
+//    imwrite("/tmp/ad.jpeg", imgdiff3);
 
     //too slow :(
     //cv::Mat element = cv::getStructuringElement(cv::MORPH_CROSS,cv::Size(40,40));
@@ -145,22 +172,6 @@ int main(int argc, char** argv)
     if(count > 500)
     {
         auto bounds = motionBounds(imgdiff);
-        if((bounds.width >= 0.95* img1.cols) && (bounds.height >= 0.95* img1.rows))
-        {
-            cerr<<"This looks like an exposure or focus error. Ignoring."<<endl;
-            //actually not that different. possibly an exposure error.
-            cout<<"0";
-            return 0;
-        }
-
-        //FIXME: this is dubious and not working anyway
-        if((bounds.width > 0.2 * img1.cols) && (bounds.height > 0.2 * img1.rows) && count < 3000 )
-        {
-            cerr<<"This looks like wind motion. Ignoring."<<endl;
-            cout<<"0";
-            return 0;
-        }
-
         //cout<<". TL = "<<bounds.tl()<<", BR = "<<bounds.br()<<endl;
         Mat crop1 = img1(bounds);
         Mat crop2 = img2(bounds);
