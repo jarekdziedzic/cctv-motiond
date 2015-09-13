@@ -181,6 +181,14 @@ int main(int argc, char** argv)
         size_t width = targetWidth;
         size_t targetHeight = 100;
         size_t height = targetHeight;
+
+        if( (bounds.height < 0.1 * img1.rows) && (count < 10000)  && (bounds.y < img1.rows*0.05))
+        {
+            cerr<<"This looks like light bleed. Ignoring."<<endl;
+            cout<<"0";
+            return 0;
+        }
+
         if(aspectratio > 1)
         {
             scalefactor = crop1.rows / targetHeight;
