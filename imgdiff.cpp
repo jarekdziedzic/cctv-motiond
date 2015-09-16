@@ -29,10 +29,10 @@ Scalar average(const Mat& in)
     return mean(in);
 }
 
-Mat adjust(const Mat& img, const double factor)
+Mat adjustExposure(const Mat& img, const double factor)
 {
     Mat imgproc = Mat(img.cols, img.rows, CV_8UC1);
-    cerr<<"adjust factor = "<<factor<<endl;
+    cerr<<"adjustExposure factor = "<<factor<<endl;
     auto multiplier = pow(2, factor);
     for_each(img.data, img.dataend, [multiplier](auto& elem)
     {
@@ -50,7 +50,7 @@ Mat adjust(const Mat& img, const double factor)
     return imgproc;
 }
 
-std::pair<Mat, Mat> equalize(Mat&& img1, Mat&& img2)
+std::pair<Mat, Mat> equalizeExposure(Mat&& img1, Mat&& img2)
 {
     double b1 = brightness::average(img1)[0];
     double b2 = brightness::average(img2)[0];
@@ -69,21 +69,16 @@ std::pair<Mat, Mat> equalize(Mat&& img1, Mat&& img2)
         //average brightness further from mid gray is the one we want to
         //replicate in the other.
         const int midGray = 127;
-        //if(abs(midGray - b1) > abs(midGray - b2))
-        //b1 = 66, b2 = 12 => 61 ?> 115
-        //if(abs(b1 - midGray) > abs(b2 - midGray))
-        // 61 >? 100
 
-        if(abs(b1 - midGray) < abs(b2 - midGray))
+        if(abs(b1 - midGray) > abs(b2 - midGray))
         {
             //img1 more clipped
-
-            return {move(img1), brightness::adjust(img2, log2(b1/b2))};
+            return {move(img1), brightness::adjustExposure(img2, log2(b1/b2))};
         }
         else
         {
             //img2 more clipped
-            return {brightness::adjust(img1, log2(b2/b1)), move(img2)};
+            return {brightness::adjustExposure(img1, log2(b2/b1)), move(img2)};
         }
     }
     else
@@ -110,7 +105,7 @@ Mat compareImages(Mat& img1, Mat& img2)
     Mat imgdiff2 = Mat(img2.cols, img2.rows, CV_8UC1);
     Mat imgdiff3 = Mat(img2.cols, img2.rows, CV_8UC1);
 
-    auto images = brightness::equalize(move(img1proc), move(img2proc));
+    auto images = brightness::equalizeExposure(move(img1proc), move(img2proc));
 
     absdiff(images.first,images.second, imgdiff);
     threshold(imgdiff, imgdiff2, 40, 255, CV_THRESH_BINARY);
@@ -150,6 +145,11 @@ Rect motionBounds(const Mat& img)
     return bounds;
 }
 
+
+// TODO: The inputs should be: images, sensitivity
+// TODO: Outputs: number of pixels and the motion bounds
+// TODO: Some external tool should then interpret the boounds and make necessary
+// TODO: crops. Maybe.
 int main(int argc, char** argv)
 {
     if(argc != 4)
@@ -182,9 +182,18 @@ int main(int argc, char** argv)
         size_t targetHeight = 100;
         size_t height = targetHeight;
 
-        if( (bounds.height < 0.1 * img1.rows) && (count < 10000)  && (bounds.y < img1.rows*0.05))
+        if( (bounds.height < 0.15 * img1.rows) && (count < 10000)  && (bounds.y < img1.rows*0.05))
         {
             cerr<<"This looks like light bleed. Ignoring."<<endl;
+            cout<<"0";
+            return 0;
+        }
+
+        if( (bounds.height > 0.95 * img1.rows) &&
+            (bounds.width> 0.95 * img1.cols) &&
+            (count > 100000) )
+        {
+            cerr<<"This looks like exposure error. Ignoring"<<endl;
             cout<<"0";
             return 0;
         }
