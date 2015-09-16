@@ -17,7 +17,7 @@ def get_images(dir, exts=['.jpeg']):
     #FIXME: chronological sort of images.
     return sorted(images)
 
-
+"""Invokes the comparison tool for given pair of images"""
 def imgdiff(p):
     try:
         return int(check_output(['./imgdiff', p[0], p[1], '/tmp']))
@@ -40,5 +40,14 @@ def find_motion(*dirs):
             scores += [(p, imgdiff(p)) for p in pairs]
         return scores
 
+def delete_old_images(*dirs):
+    for dir in dirs:
+        imgs = get_images(dir, ['.jpeg'])
+        for f in imgs:
+            print "ctime = %r" % os.path.getctime(f)
+            #TODO: if creation time older than 7 days kill kill kill, even if it's a dir
+
+
 if __name__ == '__main__':
     print  "Scores = %r" % find_motion(sys.argv[1])
+    delete_old_images(sys.argv[1])
