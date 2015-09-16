@@ -27,6 +27,15 @@ Scalar average(const Mat& in)
 {
     return mean(in);
 }
+
+double difference(const Mat& img1, const Mat& img2)
+{
+    double b1 = brightness::average(img1)[0];
+    double b2 = brightness::average(img2)[0];
+    double brghtDiff = b2 - b1;
+    return brghtDiff;
+}
+
 } //namespace brightness
 
 namespace exposure {
@@ -166,10 +175,16 @@ int main(int argc, char** argv)
     Mat img1 = imread(imgpath1);
     Mat img2 = imread(imgpath2);
 
+    auto absBriDiff = abs(brightness::difference(img1, img2));
+    if(absBriDiff > 70 )
+    {
+        //don't bother comparing. It's a massively different image.
+        cerr<<"These images vary very much in exposure. Ignoring. (brightness diff = "<< absBriDiff<<")"<<endl;
+        cout<<0<<endl;
+        return 0;
+    }
     Mat imgdiff = compareImages(img1, img2);
     int64_t count = countNonZero(imgdiff);
-    //write output: number of pixels different
-
     if(count > 500)
     {
         auto bounds = motionBounds(imgdiff);
@@ -186,15 +201,6 @@ int main(int argc, char** argv)
         if( (bounds.height < 0.15 * img1.rows) && (count < 10000)  && (bounds.y < img1.rows*0.05))
         {
             cerr<<"This looks like light bleed. Ignoring."<<endl;
-            cout<<"0";
-            return 0;
-        }
-
-        if( (bounds.height > 0.95 * img1.rows) &&
-            (bounds.width> 0.95 * img1.cols) &&
-            (count > 100000) )
-        {
-            cerr<<"This looks like exposure error. Ignoring"<<endl;
             cout<<"0";
             return 0;
         }
@@ -220,6 +226,8 @@ int main(int argc, char** argv)
 
         imwrite(string(cropdir) + "/" + mybasename(imgpath1) + "-1s.jpeg", crop1s);
         imwrite(string(cropdir) + "/" + mybasename(imgpath2) + "-2s.jpeg", crop2s);
+
+        //write output: number of pixels different between the images
         cout<<count<<endl;
     }
     else
