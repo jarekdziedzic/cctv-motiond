@@ -22,17 +22,18 @@ std::string mybasename(const std::string& path)
     return s;
 }
 
-namespace brightness
-{
+namespace brightness {
 Scalar average(const Mat& in)
 {
     return mean(in);
 }
+} //namespace brightness
 
-Mat adjustExposure(const Mat& img, const double factor)
+namespace exposure {
+Mat adjust(const Mat& img, const double factor)
 {
     Mat imgproc = Mat(img.cols, img.rows, CV_8UC1);
-    cerr<<"adjustExposure factor = "<<factor<<endl;
+    cerr<<"axposure adjustment factor = "<<factor<<endl;
     auto multiplier = pow(2, factor);
     for_each(img.data, img.dataend, [multiplier](auto& elem)
     {
@@ -50,7 +51,7 @@ Mat adjustExposure(const Mat& img, const double factor)
     return imgproc;
 }
 
-std::pair<Mat, Mat> equalizeExposure(Mat&& img1, Mat&& img2)
+std::pair<Mat, Mat> equalize(Mat&& img1, Mat&& img2)
 {
     double b1 = brightness::average(img1)[0];
     double b2 = brightness::average(img2)[0];
@@ -73,12 +74,12 @@ std::pair<Mat, Mat> equalizeExposure(Mat&& img1, Mat&& img2)
         if(abs(b1 - midGray) > abs(b2 - midGray))
         {
             //img1 more clipped
-            return {move(img1), brightness::adjustExposure(img2, log2(b1/b2))};
+            return {move(img1), exposure::adjust(img2, log2(b1/b2))};
         }
         else
         {
             //img2 more clipped
-            return {brightness::adjustExposure(img1, log2(b2/b1)), move(img2)};
+            return {exposure::adjust(img1, log2(b2/b1)), move(img2)};
         }
     }
     else
@@ -87,7 +88,7 @@ std::pair<Mat, Mat> equalizeExposure(Mat&& img1, Mat&& img2)
     }
 }
 
-} //namespace brightness
+} //namespace exposure
 
 
 Mat toGrayscale(const Mat& img)
@@ -105,7 +106,7 @@ Mat compareImages(Mat& img1, Mat& img2)
     Mat imgdiff2 = Mat(img2.cols, img2.rows, CV_8UC1);
     Mat imgdiff3 = Mat(img2.cols, img2.rows, CV_8UC1);
 
-    auto images = brightness::equalizeExposure(move(img1proc), move(img2proc));
+    auto images = exposure::equalize(move(img1proc), move(img2proc));
 
     absdiff(images.first,images.second, imgdiff);
     threshold(imgdiff, imgdiff2, 40, 255, CV_THRESH_BINARY);
