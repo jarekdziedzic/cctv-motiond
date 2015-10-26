@@ -5,10 +5,13 @@ from subprocess import check_output
 
 
 def imgdiff(img):
-    return int(check_output(["../imgdiff", img[0], img[1], "/tmp"]))
+    output = check_output(["../imgdiff", img[0], img[1], "/tmp"])
+    #sprint "output of %r is '%s'" %(img, output)
+    return int(output)
 
 def main():
     images_nodiff = [ ["images/5.jpeg", "images/6.jpeg"],
+                      ["images/8.jpeg", "images/9.jpeg"],
                     ]
     images_diff = [ ["images/6.jpeg", "images/7.jpeg"],
                     ]
