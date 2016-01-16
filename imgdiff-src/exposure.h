@@ -11,6 +11,11 @@
 #include <opencv2/core/core.hpp>
 
 namespace exposure {
+
+/**
+ * @brief Increase/decrease exposure by a specified factor.
+ * This function returns a new adjusted image.
+ */
 cv::Mat adjust(const cv::Mat& img, const double factor);
 
 std::pair<cv::Mat, cv::Mat> equalize(cv::Mat&& img1, cv::Mat&& img2);

@@ -15,22 +15,15 @@ using namespace std;
 namespace exposure {
 Mat adjust(const Mat& img, const double factor)
 {
-    Mat imgproc = Mat(img.cols, img.rows, CV_8UC1);
-    cerr<<"axposure adjustment factor = "<<factor<<endl;
+    Mat imgproc = img;
+    cerr<<"exposure adjustment factor = "<<factor<<endl;
     auto multiplier = pow(2, factor);
-    for_each(img.data, img.dataend, [multiplier](auto& elem)
-    {
-        double result = elem * multiplier;
-        if(result > 255)
+    transform(img.data, img.dataend, imgproc.data,
+        [multiplier](const auto& elem)
         {
-            elem = 255;
-        }
-        else
-        {
-            elem = result;
-        }
-    });
-    img.convertTo(imgproc, CV_8UC1, 1, factor);
+            //white-clip the result
+            return min(255, (int)(elem * multiplier));
+        });
     return imgproc;
 }
 
