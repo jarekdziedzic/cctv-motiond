@@ -21,7 +21,7 @@ if [ $1 -nt "$1/.done" ]; then
     if [ ! -e  .done ]; then 
         touch -t 197001010000 .done 
     fi
-    find *.jpeg -newer .done | grep -v 0_ciekawe | xargs -r -n2 bash -c 'diff_and_update_progress "$@"' _ || true
+    find *.jpeg -newer .done | grep -v 0_ciekawe | sort |xargs -r -n2 bash -c 'diff_and_update_progress "$@"' _ || true
 #    /usr/local/bin/generate-motion-thumbs.sh .
     cd -
 fi
