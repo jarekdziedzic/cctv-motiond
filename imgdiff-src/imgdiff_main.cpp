@@ -58,7 +58,7 @@ int main(int argc, char** argv)
     }
     Mat imgdiff = compareImages(img1, img2);
     int64_t count = countNonZero(imgdiff);
-    if(count > 500)
+    if(count > 480)
     {
         auto bounds = motionBounds(imgdiff);
         //cout<<". TL = "<<bounds.tl()<<", BR = "<<bounds.br()<<endl;
