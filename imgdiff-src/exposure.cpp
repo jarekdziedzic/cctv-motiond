@@ -18,12 +18,12 @@ Mat adjust(const Mat& img, const double factor)
     Mat imgproc = img;
     cerr<<"exposure adjustment factor = "<<factor<<endl;
     auto multiplier = pow(2, factor);
-    transform(img.data, img.dataend, imgproc.data,
-        [multiplier](const auto& elem)
+    auto f =  [multiplier](unsigned char elem)
         {
             //white-clip the result
             return min(255, (int)(elem * multiplier));
-        });
+        };
+    std::transform(img.datastart, img.dataend, imgproc.data, f);
     return imgproc;
 }
 
