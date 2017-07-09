@@ -3,8 +3,10 @@ dest=/usr/local/bin
 all: compile check
 
 compile:
-		g++ -std=c++14 imgdiff-src/*.cpp -lopencv_core -lopencv_highgui -lopencv_imgproc -Os -o imgdiff
+		g++ -std=c++14 imgdiff-src/*.cpp -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -Os -o imgdiff
 
+profile:
+		g++ -std=c++14 imgdiff-src/*.cpp -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -pg -Os -o imgdiff
 clean:
 		rm imgdiff
 
