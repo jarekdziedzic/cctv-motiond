@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   exposure.h
  * Author: Jarek Dziedzic
  *
@@ -18,6 +18,13 @@ namespace exposure {
  */
 cv::Mat adjust(const cv::Mat& img, const double factor);
 
+/**
+ * @brief Equalizes the exposure of two images.
+ *
+ * Aims to achieve equally bad clipping in both images.
+ *
+ * @return pair of {img1, img2}
+ */
 std::pair<cv::Mat, cv::Mat> equalize(cv::Mat&& img1, cv::Mat&& img2);
 
 } //namespace exposure
