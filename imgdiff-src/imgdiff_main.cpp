@@ -49,7 +49,7 @@ int main(int argc, char** argv)
     Mat img2 = imread(imgpath2);
 
     auto absBriDiff = abs(brightness::difference(img1, img2));
-    if(absBriDiff > 70 )
+    if (absBriDiff > 70 )
     {
         //don't bother comparing. It's a massively different image.
         cerr<<"These images vary very much in exposure. Ignoring. (brightness diff = "<< absBriDiff<<")"<<endl;
@@ -58,7 +58,7 @@ int main(int argc, char** argv)
     }
     Mat imgdiff = compareImages(img1, img2);
     int64_t count = countNonZero(imgdiff);
-    if(count > 480)
+    if (count > 480)
     {
         auto bounds = motionBounds(imgdiff);
         //cout<<". TL = "<<bounds.tl()<<", BR = "<<bounds.br()<<endl;
@@ -71,14 +71,14 @@ int main(int argc, char** argv)
         size_t targetHeight = 100;
         size_t height = targetHeight;
 
-        if( (bounds.height < 0.15 * img1.rows) && (count < 10000)  && (bounds.y < img1.rows*0.05))
+        if ((bounds.height < 0.15 * img1.rows) && (count < 10000)  && (bounds.y < img1.rows*0.05))
         {
             cerr<<"This looks like light bleed. Ignoring."<<endl;
             cout<<"0";
             return 0;
         }
 
-        if(aspectratio > 1)
+        if (aspectratio > 1)
         {
             scalefactor = crop1.rows / targetHeight;
             width = targetWidth * aspectratio;

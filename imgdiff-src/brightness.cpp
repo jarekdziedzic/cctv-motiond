@@ -9,7 +9,9 @@
 
 using namespace std;
 using namespace cv;
+
 namespace brightness {
+
 Scalar average(const Mat& in)
 {
     return mean(in);

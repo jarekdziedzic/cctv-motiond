@@ -37,7 +37,7 @@ std::pair<Mat, Mat> equalize(Mat&& img1, Mat&& img2)
     cerr<<"brightness difference: "<<brghtDiff<<endl;
 
     //images differ in brightness
-    if(abs(brghtDiff) > 1)
+    if (abs(brghtDiff) > 1)
     {
         //shadow clipping and highlight clipping:
         //we actually want the images to be clipped same way
@@ -47,7 +47,7 @@ std::pair<Mat, Mat> equalize(Mat&& img1, Mat&& img2)
         //replicate in the other.
         const int midGray = 127;
 
-        if(abs(b1 - midGray) > abs(b2 - midGray))
+        if (abs(b1 - midGray) > abs(b2 - midGray))
         {
             //img1 more clipped
             return {move(img1), exposure::adjust(img2, log2(b1/b2))};

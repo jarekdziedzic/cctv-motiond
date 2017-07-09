@@ -57,7 +57,7 @@ Rect motionBounds(const Mat& img)
     vector<Point> jointContour;
 
     findContours(img, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
-    for(size_t i = 0; i < contours.size(); ++i)
+    for (size_t i = 0; i < contours.size(); ++i)
     {
         jointContour.insert(jointContour.end(), contours[i].begin(),contours[i].end());
     }
