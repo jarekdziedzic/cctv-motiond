@@ -12,6 +12,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
 
+#include <future>
+
 using namespace std;
 using namespace cv;
 
@@ -44,8 +46,11 @@ int main(int argc, char** argv)
     char* imgpath2 = argv[2];
     char* cropdir = argv[3];
 
-    Mat img1 = imread(imgpath1);
-    Mat img2 = imread(imgpath2);
+    auto img1Fut = std::async(std::launch::async, imread, imgpath1, IMREAD_COLOR);
+    auto img2Fut = std::async(std::launch::async, imread, imgpath2, IMREAD_COLOR);
+
+    Mat img1 = img1Fut.get();
+    Mat img2 = img2Fut.get();
 
     auto absBriDiff = abs(brightness::difference(img1, img2));
     if (absBriDiff > 70 )
@@ -90,15 +95,21 @@ int main(int argc, char** argv)
         Mat crop1s(height, width, CV_32S);
         Mat crop2s(height, width, CV_32S);
 
-        resize(crop1, crop1s, Size(width, height));
-        resize(crop2, crop2s, Size(width, height));
+        auto r1f = std::async(std::launch::async, resize, crop1, crop1s, Size(width, height), 0, 0, INTER_LINEAR);
+        auto r2f = std::async(std::launch::async, resize, crop2, crop2s, Size(width, height), 0, 0, INTER_LINEAR);
 
-        imwrite(string(cropdir) + "/" + mybasename(imgpath1) + "-1.jpeg", crop1);
-        imwrite(string(cropdir) + "/" + mybasename(imgpath2) + "-2.jpeg", crop2);
+        r1f.wait();
+        r2f.wait();
+        auto w1f = std::async(std::launch::async, imwrite, string(cropdir) + "/" + mybasename(imgpath1) + "-1.jpeg", crop1, std::vector<int>{});
+        auto w2f = std::async(std::launch::async, imwrite, string(cropdir) + "/" + mybasename(imgpath2) + "-2.jpeg", crop2, std::vector<int>{});
 
-        imwrite(string(cropdir) + "/" + mybasename(imgpath1) + "-1s.jpeg", crop1s);
-        imwrite(string(cropdir) + "/" + mybasename(imgpath2) + "-2s.jpeg", crop2s);
+        auto w3f = std::async(std::launch::async, imwrite, string(cropdir) + "/" + mybasename(imgpath1) + "-1s.jpeg", crop1s, std::vector<int>{});
+        auto w4f = std::async(std::launch::async, imwrite, string(cropdir) + "/" + mybasename(imgpath2) + "-2s.jpeg", crop2s, std::vector<int>{});
 
+        w1f.wait();
+        w2f.wait();
+        w3f.wait();
+        w4f.wait();
         //write output: number of pixels different between the images
         cout<<count<<endl;
     }
