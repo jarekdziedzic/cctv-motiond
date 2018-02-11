@@ -1,6 +1,6 @@
 dest=/usr/local/bin
 
-all: compile check
+all: check
 
 imgdiff: imgdiff-src/*.cpp
 		g++ -g -std=c++14 imgdiff-src/*.cpp -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -O3 -pthread -lpthread -o imgdiff
@@ -35,7 +35,7 @@ uninstall:
 		rm $(dest) imgdiff
 		rm $(dest) kill-cctv-motiond.sh
 
-check:
+check: imgdiff
 	cd test; ./imgdiff-test.sh ../imgdiff
 	cd test; ./imgdiff-test.py
 	cd test/imgdiff-varying-exposure; ./test-exposure-variations.py
