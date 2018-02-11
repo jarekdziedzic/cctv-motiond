@@ -2,11 +2,11 @@ dest=/usr/local/bin
 
 all: compile check
 
-compile:
-		g++ -std=c++14 imgdiff-src/*.cpp -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -Os -o imgdiff
+imgdiff: imgdiff-src/*.cpp
+		g++ -g -std=c++14 imgdiff-src/*.cpp -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -O3 -pthread -lpthread -o imgdiff
 
 profile:
-		g++ -std=c++14 imgdiff-src/*.cpp -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -pg -Os -o imgdiff
+		g++ -std=c++14 imgdiff-src/*.cpp -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -pg -Os -pthread -lpthread -o imgdiff
 clean:
 		rm imgdiff
 
@@ -39,3 +39,6 @@ check:
 	cd test; ./imgdiff-test.sh ../imgdiff
 	cd test; ./imgdiff-test.py
 	cd test/imgdiff-varying-exposure; ./test-exposure-variations.py
+
+perfcheck: imgdiff
+	time ./imgdiff test/images/1.jpeg test/images/2.jpeg /tmp 2>/dev/null
