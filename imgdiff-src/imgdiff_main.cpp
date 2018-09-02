@@ -99,10 +99,10 @@ int main(int argc, char** argv)
         auto r2f = std::async(std::launch::async, resize, crop2, crop2s, Size(width, height), 0, 0, INTER_LINEAR);
 
         r1f.wait();
-        r2f.wait();
         auto w1f = std::async(std::launch::async, imwrite, string(cropdir) + "/" + mybasename(imgpath1) + "-1.jpeg", crop1, std::vector<int>{});
         auto w2f = std::async(std::launch::async, imwrite, string(cropdir) + "/" + mybasename(imgpath2) + "-2.jpeg", crop2, std::vector<int>{});
 
+        r2f.wait();
         auto w3f = std::async(std::launch::async, imwrite, string(cropdir) + "/" + mybasename(imgpath1) + "-1s.jpeg", crop1s, std::vector<int>{});
         auto w4f = std::async(std::launch::async, imwrite, string(cropdir) + "/" + mybasename(imgpath2) + "-2s.jpeg", crop2s, std::vector<int>{});
 
