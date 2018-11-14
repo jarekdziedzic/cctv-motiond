@@ -1,12 +1,13 @@
 dest=/usr/local/bin
-
+#CXX_FLAGS=-g -O0
+CXX_FLAGS=-O3
 all: check
 
 imgdiff: imgdiff-src/*.cpp Makefile
-		g++ -std=c++17 imgdiff-src/*.cpp -Wl,--as-needed  -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -O3 -pthread -lpthread -lstdc++fs -o imgdiff
+		g++ -std=c++17 imgdiff-src/*.cpp $(CXX_FLAGS) -Wl,--as-needed  -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -pthread -lpthread -lstdc++fs -o imgdiff
 
 profile:
-		g++ -std=c++17 imgdiff-src/*.cpp -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -pg -Os -pthread -lpthread -lstdc++fs -o imgdiff
+		g++ -std=c++17 imgdiff-src/*.cpp $(CXX_FLAGS) -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -pg -Os -pthread -lpthread -lstdc++fs -o imgdiff
 clean:
 		rm imgdiff
 
