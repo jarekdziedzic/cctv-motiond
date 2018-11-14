@@ -113,13 +113,10 @@ int main(int argc, char** argv)
         w2f.wait();
         w3f.wait();
         w4f.wait();
-        //write output: number of pixels different between the images
-        cout<<count<<endl;
+        
     }
-    else
-    {
-        cout<<"0";
-    }
+    //write output: number of pixels different between the images
+    cout<<"Difference: " << count << "px" << endl;
 
     return 0;
 }

@@ -2,10 +2,15 @@
 __author__ = 'jarek'
 
 from subprocess import check_output
+import re
 
 
 def imgdiff(img):
-    return int(check_output(["../../imgdiff", img[0], img[1], "/tmp"]))
+    output = check_output(["../../imgdiff", img[0], img[1], "/tmp"])
+    #sprint "output of %r is '%s'" %(img, output)
+    count = re.search('(?<=Difference: )\d+', output)
+    return int(count.group(0))
+
 
 def main():
     images = [ ["images/brighter.jpeg", "images/darker.jpeg"],
@@ -15,10 +20,11 @@ def main():
                ["images/brighter5.jpeg", "images/darker5.jpeg"]
             ]
 
+    DIFFERENT_PIXEL_LIMIT = 480
     for imgs in images:
         print "Comparing ", imgs
         rv = imgdiff(imgs)
-        if rv == 0:
+        if rv < DIFFERENT_PIXEL_LIMIT:
             print "OK"
         else:
             print "FAIL %r, imgdiff=%r" % (imgs, rv)
@@ -26,11 +32,12 @@ def main():
 
         imgs = imgs[::-1]
         print "Comparing ", imgs
+        
         rv = imgdiff(imgs)
-        if rv == 0:
+        if rv < DIFFERENT_PIXEL_LIMIT:
             print "OK"
         else:
-            print "FAIL %r, imgdiff=%r" % (imgs, rv)
+            print "FAIL %r, imgdiff=%r, limit=%r" % (imgs, rv, DIFFERENT_PIXEL_LIMIT)
             return 1
 
     return 0

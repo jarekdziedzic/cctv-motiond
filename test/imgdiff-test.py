@@ -2,12 +2,14 @@
 __author__ = 'jarek'
 
 from subprocess import check_output
+import re
 
 
 def imgdiff(img):
     output = check_output(["../imgdiff", img[0], img[1], "/tmp"])
     #sprint "output of %r is '%s'" %(img, output)
-    return int(output)
+    count = re.search('(?<=Difference: )\d+', output)
+    return int(count.group(0))
 
 def main():
     images_nodiff = [ ["images/5.jpeg", "images/6.jpeg"],
