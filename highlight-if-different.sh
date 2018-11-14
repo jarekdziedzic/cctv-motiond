@@ -9,7 +9,7 @@ mkdir -p "0_ciekawe/wycinki" &>/dev/null || true
 result=`/usr/local/bin/imgdiff $1 $2 ${cropdir}`
 
 ec=$?
-if [ "${result}" -lt "480" ]; then
+if [ "${result}" -gt "480" ]; then
     echo "Intruder found. Different pixel count = ${result}"
     echo "Highlighting ${1} and ${2} in $PWD"
     ln -s `readlink -f ${1}` "0_ciekawe/$(basename ${1})" || true
