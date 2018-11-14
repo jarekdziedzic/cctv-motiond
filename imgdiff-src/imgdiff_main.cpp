@@ -116,7 +116,7 @@ int main(int argc, char** argv)
         
     }
     //write output: number of pixels different between the images
-    cout<<"Difference: " << count << "px" << endl;
+    cout << count << endl;
 
     return 0;
 }
