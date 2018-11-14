@@ -10,11 +10,13 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <experimental/filesystem>
 #include <iostream>
 
 #include <future>
 
 using namespace std;
+using namespace std::experimental;
 using namespace cv;
 
 std::string mybasename(const std::string& path)
@@ -38,7 +40,8 @@ int main(int argc, char** argv)
 {
     if(argc != 4)
     {
-        cerr<<"Invalid parameters count."<<endl;
+        cerr<<"Invalid parameters count."<<"\n\n";
+        cerr<<"Usage: " << filesystem::path(argv[0]).filename().string() << " image1 image2 output-directory" << endl;
         exit(1);
     }
 
