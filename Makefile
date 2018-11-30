@@ -4,12 +4,29 @@ CXX_FLAGS=-O3
 all: check
 
 imgdiff: imgdiff-src/*.cpp Makefile
-		g++ -std=c++17 imgdiff-src/*.cpp $(CXX_FLAGS) -Wl,--as-needed  -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -pthread -lpthread -lstdc++fs -o imgdiff
+		g++ -std=c++17 imgdiff-src/*.cpp $(CXX_FLAGS) -Wl,--as-needed  -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -pthread -lpthread -lstdc++fs -O3 -g -o imgdiff
 
-profile:
-		g++ -std=c++17 imgdiff-src/*.cpp $(CXX_FLAGS) -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -pg -Os -pthread -lpthread -lstdc++fs -o imgdiff
+imgdiff-prof: imgdiff
+		g++ -std=c++17 imgdiff-src/*.cpp $(CXX_FLAGS) -Wl,--as-needed -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -g -pg -O3 -pthread -lpthread -lstdc++fs -o imgdiff-prof
+
+run-oprofile: imgdiff-prof
+		sudo operf ./imgdiff-prof test/images/big1.jpeg test/images/big2.jpeg /tmp && opreport -c 
+		#&& sudo rm -rf oprofile_data
+
+run-perf: imgdiff
+		perf record -g -F1000 ./imgdiff test/images/big1.jpeg test/images/big2.jpeg /tmp; perf annotate
+
+run-gprof: imgdiff-prof
+		./imgdiff-prof test/images/big1.jpeg test/images/big2.jpeg /tmp; gprof --flat-profile ./imgdiff-prof gmon.out
+
+run-callgrind: imgdiff
+		valgrind --separate-threads=yes --tool=callgrind  ./imgdiff test/images/big1.jpeg test/images/big2.jpeg /tmp
+
+run-timed:
+		time ./imgdiff test/images/big1.jpeg test/images/big2.jpeg /tmp
+# -v --dump-every-bb=10000000 
 clean:
-		rm imgdiff
+		rm imgdiff imgdiff-prof
 
 install:
 		cp cctv-motiond $(dest)
