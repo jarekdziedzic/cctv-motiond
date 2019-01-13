@@ -31,11 +31,6 @@ std::string mybasename(const std::string& path)
     return s;
 }
 
-
-// TODO: The inputs should be: images, sensitivity
-// TODO: Outputs: number of pixels and the motion bounds
-// TODO: Some external tool should then interpret the bounds and make necessary
-// TODO: crops. Maybe.
 int main(int argc, char** argv)
 {
     if(argc != 4)

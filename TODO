@@ -1,0 +1,7 @@
+
+TODO: The inputs should be list of images of arbitrary length greater than 2, and maximum sensitivity
+TODO: Outputs could be status and setting file attributes (attr -s) indicating how much motion there is 
+TODO: There could be a web app which has a slider for sensitivity and dynamically changes the images
+TODO: presented to the viewer. Lots wind - low sensitivity. Not much movement, high sensitivity.
+The benefit of all this is that I don't need to maintain separate database(s)
+
